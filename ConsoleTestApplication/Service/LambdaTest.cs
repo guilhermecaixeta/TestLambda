@@ -11,27 +11,30 @@ namespace ConsoleTestApplication.Service
 {
     public static class LambdaTest
     {
-        private static int _MAX = 1000000;
-        private static int _COMP = 150000;
+        private static int _MAX = 5000000;
+        private static int _COMP = 255000;
+        private const int _ITERATOR = 1000; 
         public static List<FakeObject> testList { get; set; }
-
+        public static IQueryable<FakeObject> queryable { get; set; }
 
         public static void CreateList()
         {
+            int maxValue = _MAX * 10;
             testList = new List<FakeObject>();
-            foreach (int val in Enumerable.Range(1, _MAX))
+            for(int i = 0; i < _MAX; i ++)
             {
-                testList.Add(new FakeObject() { value = val });
+                testList.Add(new FakeObject() { value = new Random().Next(maxValue) });
             }
+            queryable = testList.AsQueryable();
         }
 
         public static string LambdaDirectCall()
         {
             var timer = new Stopwatch();
-            int t = 0;
             timer.Start();
-            for (int i = 0; i < 10000; i++)
-                t = testList.Where(x => x.value >= _COMP).Count();
+            int t = 0;
+            for (int i = 0; i < _ITERATOR; i++)
+                t = queryable.Where(x => x.value >= _COMP).Count();
             timer.Stop();
             return $"Total size {testList.Count()} - Total result {t} {Environment.NewLine}Direct call has executed in {timer.ElapsedMilliseconds} ms.";
         }
@@ -45,11 +48,10 @@ namespace ConsoleTestApplication.Service
             Commom.SaveOnCacheIfNonExists<FilterFakeObject>();
 
             var timer = new Stopwatch();
-            var queryable = testList.AsQueryable();
-            int t = 0;
             var func = filter.GenerateLambda<FakeObject, FilterFakeObject>().Compile();
             timer.Start();
-            for (int i = 0; i < 10000; i++)
+            int t = 0;
+            for (int i = 0; i < _ITERATOR; i++)
                 t = queryable.Where(x => func(x)).Count();
             timer.Stop();
             return $"Total size {testList.Count()} - Total result {t} {Environment.NewLine}Compiled call has executed in {timer.ElapsedMilliseconds} ms.";
@@ -65,9 +67,8 @@ namespace ConsoleTestApplication.Service
 
             var timer = new Stopwatch();
             int t = 0;
-            var queryable = testList.AsQueryable();
             timer.Start();
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < _ITERATOR; i++)
                 t = queryable.Where(filter.GenerateLambda<FakeObject, FilterFakeObject>()).Count();
             timer.Stop();
             return $"Total size {testList.Count()} - Total result {t} {Environment.NewLine}Generated call has executed in {timer.ElapsedMilliseconds} ms.";
