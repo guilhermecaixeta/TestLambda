@@ -8,10 +8,22 @@ namespace ConsoleTestApplication
         static void Main(string[] args)
         {
             LambdaTest.CreateList();
-            var t1 = LambdaTest.LambdaDirectCall();
-            var t2 = LambdaTest.LambdaCompiled();
-            var t3 = LambdaTest.LambdaGenerated();
-            Console.WriteLine($"{t1}{Environment.NewLine}{t2}{Environment.NewLine}{t3}");
+            Console.Write(LambdaTest.GetHeader());
+            Console.WriteLine($"{Environment.NewLine}First test finalized on  {DateTime.Now.ToShortTimeString()}  {Environment.NewLine}" +
+                $"RESULT> {Environment.NewLine}{LambdaTest.LambdaDirectCall()}");
+
+            Console.WriteLine($"{Environment.NewLine}Second test finalized on  {DateTime.Now.ToShortTimeString()}  {Environment.NewLine}" +
+                $"RESULT> {Environment.NewLine}{LambdaTest.LambdaCompiledCache()}");
+
+            //Console.WriteLine($"{Environment.NewLine}Third test finalized on  {DateTime.Now.ToShortTimeString()}  {Environment.NewLine}" +
+            //    $"RESULT> {Environment.NewLine}{LambdaTest.LambdaCompiled()}");
+
+            Console.WriteLine($"{Environment.NewLine}Four test finalized on  {DateTime.Now.ToShortTimeString()}  {Environment.NewLine}" +
+                $"RESULT> {Environment.NewLine}{LambdaTest.LambdaGeneratedCache()}");
+
+            Console.WriteLine($"{Environment.NewLine}Fifth test finalized on  {DateTime.Now.ToShortTimeString()}  {Environment.NewLine}" +
+                $"RESULT> {Environment.NewLine}{LambdaTest.LambdaGenerated()}");
+
             Console.ReadKey();
         }
     }
